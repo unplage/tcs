@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>贪吃蛇进化论 | 精致摇杆·精准操控</title>
+    <title>贪吃蛇进化论 | 精致摇杆·全面优化</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="manifest" href="./manifest.json">
     <style>
@@ -23,8 +23,9 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 12px 8px;
+            padding: 12px 8px 40px 8px;  /* 增加底部内边距，防止底部内容被遮挡 */
             touch-action: pan-y;
+            overflow-y: auto;
         }
         .header {
             text-align: center;
@@ -33,7 +34,7 @@
             margin-bottom: 6px;
         }
         h1 {
-            font-size: 1.9rem;
+            font-size: 1.8rem;
             letter-spacing: 1px;
             background: linear-gradient(135deg, #FFD966, #FF8C42, #FF3C8E);
             -webkit-background-clip: text;
@@ -42,7 +43,7 @@
             text-shadow: 0 2px 5px rgba(0,0,0,0.3);
         }
         .subtitle {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #9aa4bf;
         }
         .game-container {
@@ -58,7 +59,7 @@
         }
         .stats-row {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             justify-content: space-between;
             margin-bottom: 12px;
             flex-wrap: wrap;
@@ -66,25 +67,25 @@
         .stat-card {
             background: rgba(0,0,0,0.5);
             border-radius: 24px;
-            padding: 6px 12px;
+            padding: 5px 8px;
             flex: 1;
             text-align: center;
             backdrop-filter: blur(4px);
             border: 1px solid rgba(255,255,255,0.15);
         }
         .stat-value {
-            font-size: 1.6rem;
+            font-size: 1.4rem;
             font-weight: 800;
-            line-height: 1;
+            line-height: 1.2;
             color: #FFE484;
         }
         .stat-label {
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             opacity: 0.8;
         }
         .mode-bar {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             margin: 8px 0;
             background: #0f1629;
             padding: 5px;
@@ -94,16 +95,16 @@
             flex: 1;
             background: transparent;
             border: none;
-            padding: 8px 4px;
+            padding: 6px 4px;
             border-radius: 40px;
             font-weight: 600;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: #b9c3e6;
             transition: 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: 5px;
         }
         .mode-btn.active {
             background: linear-gradient(95deg, #3a3f6e, #2a2f55);
@@ -112,7 +113,7 @@
         }
         .difficulty-selector {
             display: flex;
-            gap: 6px;
+            gap: 5px;
             margin: 8px 0;
         }
         .difficulty-btn {
@@ -120,8 +121,8 @@
             background: rgba(255,255,255,0.08);
             border: none;
             border-radius: 30px;
-            padding: 8px 0;
-            font-size: 0.7rem;
+            padding: 6px 0;
+            font-size: 0.65rem;
             font-weight: bold;
             color: #ccc;
         }
@@ -130,19 +131,19 @@
             color: #0f0f1f;
             box-shadow: 0 0 6px #ffb347;
         }
-        /* 摇杆容器 - 外圆缩小为120x120，内圆60x60不变 */
+        /* 摇杆外圆100px，内圆60px不变 */
         .joystick-container {
             display: flex;
             justify-content: center;
             align-items: center;
-            margin: 16px auto 8px;
+            margin: 12px auto 6px;
             width: 100%;
         }
         .joystick-base {
             position: relative;
-            width: 120px;          /* 缩小外圆 */
-            height: 120px;
-            background: rgba(30, 40, 65, 0.9);
+            width: 100px;          /* 外圆100x100 */
+            height: 100px;
+            background: rgba(30, 40, 65, 0.95);
             border-radius: 50%;
             box-shadow: 0 6px 16px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.2);
             display: flex;
@@ -152,7 +153,7 @@
         }
         .joystick-thumb {
             position: absolute;
-            width: 60px;           /* 内圆尺寸不变 */
+            width: 60px;           /* 内圆60px不变 */
             height: 60px;
             background: radial-gradient(circle at 30% 30%, #f0f0f0, #c0c0e0);
             border-radius: 50%;
@@ -173,7 +174,7 @@
         }
         .action-btn {
             flex: 1;
-            padding: 10px 0;
+            padding: 8px 0;
             border-radius: 40px;
             font-weight: bold;
             background: #2c314e;
@@ -182,7 +183,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: 5px;
+            font-size: 0.8rem;
         }
         .start-btn { background: #2ecc71; color: #000; }
         .pause-btn { background: #e67e22; }
@@ -194,15 +196,16 @@
             border-radius: 28px;
             padding: 12px;
             margin-top: 6px;
+            margin-bottom: 8px;
         }
         .toast-msg {
             position: fixed;
-            bottom: 20%;
+            bottom: 25%;
             left: 50%;
             transform: translateX(-50%);
             background: #000000cc;
             backdrop-filter: blur(12px);
-            padding: 6px 18px;
+            padding: 5px 16px;
             border-radius: 40px;
             font-size: 0.8rem;
             color: #FFD966;
@@ -218,22 +221,23 @@
             100% { opacity: 0; transform: translate(-50%, -20px);}
         }
         .swipe-hint {
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             text-align: center;
             color: #8e99c0;
             margin-top: 6px;
         }
         @media (max-width: 460px) {
-            .joystick-base { width: 110px; height: 110px; }
+            .joystick-base { width: 90px; height: 90px; }
             .joystick-thumb { width: 55px; height: 55px; }
             .stat-value { font-size: 1.2rem; }
+            .action-btn { padding: 6px 0; font-size: 0.7rem; }
         }
     </style>
 </head>
 <body>
 <div class="header">
     <h1><i class="fas fa-dragon"></i> 贪吃蛇·进化论</h1>
-    <div class="subtitle">精致摇杆 | 多重模式 | 连击狂暴</div>
+    <div class="subtitle">100px 精致摇杆 | 多重模式 | 连击狂暴</div>
 </div>
 
 <div class="game-container">
@@ -257,9 +261,9 @@
 
     <div class="game-area">
         <canvas id="gameCanvas"></canvas>
-        <div class="game-over" id="gameOverScreen" style="position:absolute; inset:0; background:rgba(0,0,0,0.9); border-radius:24px; display:none; flex-direction:column; align-items:center; justify-content:center; z-index:20;">
-            <h2 style="color:#ff6b6b;">GAME OVER</h2>
-            <div class="final-score" id="finalScore" style="font-size:2rem; margin:10px;">0</div>
+        <div class="game-over" id="gameOverScreen" style="position:absolute; inset:0; background:rgba(0,0,0,0.92); border-radius:24px; display:none; flex-direction:column; align-items:center; justify-content:center; z-index:20;">
+            <h2 style="color:#ff6b6b; font-size:1.8rem;">GAME OVER</h2>
+            <div class="final-score" id="finalScore" style="font-size:2rem; margin:8px;">0</div>
             <div style="display:flex; gap:12px; margin-top:10px;">
                 <button class="action-btn restart-btn" id="restartGameOverBtn"><i class="fas fa-redo"></i> 重来</button>
                 <button class="action-btn start-btn" id="menuBackBtn"><i class="fas fa-home"></i> 菜单</button>
@@ -268,7 +272,7 @@
         <div class="swipe-hint"><i class="fas fa-hand-peace"></i> 按住圆形摇杆滑动 | 键盘方向键 | 屏幕滑动</div>
     </div>
 
-    <!-- 圆形摇杆：外圆缩小，内圆不变 -->
+    <!-- 外圆100px，内圆60px 摇杆 -->
     <div class="joystick-container">
         <div class="joystick-base" id="joystickBase">
             <div class="joystick-thumb" id="joystickThumb"></div>
@@ -283,8 +287,8 @@
 </div>
 
 <div class="scoreboard-container">
-    <h3 style="text-align:center; color:#FFD966;"><i class="fas fa-trophy"></i> 荣誉殿堂</h3>
-    <ul id="scoreList" style="list-style:none; max-height:140px; overflow-y:auto;"></ul>
+    <h3 style="text-align:center; color:#FFD966; font-size:1.1rem;"><i class="fas fa-trophy"></i> 荣誉殿堂</h3>
+    <ul id="scoreList" style="list-style:none; max-height:130px; overflow-y:auto; padding:0 6px;"></ul>
 </div>
 
 <script>
@@ -301,7 +305,6 @@
         let score = 0, highScore = 0;
         let isPaused = true, isGameOver = false;
         let gameInterval = null;
-        let baseSpeed = 140;
         let currentSpeed = 140;
         let currentDifficulty = 'medium';
         let currentMode = 'classic';
@@ -322,16 +325,11 @@
         let timeLeft = 60;
         let timedModeInterval = null;
         
-        // 生存模式速度因子
-        let survivalBase = 130;
-        
         // 食物
         let food = {x:15, y:10};
         
-        // 控制防抖 (每次移动周期内只允许改变一次方向)
+        // 控制防抖
         let canChange = true;
-        
-        // 触摸滑动 (全局面板保留)
         let touchStart = {x:0,y:0};
         
         // UI 元素
@@ -343,25 +341,27 @@
         const gameOverScreen = document.getElementById('gameOverScreen');
         const finalScoreSpan = document.getElementById('finalScore');
         
-        // ---------- 优化摇杆逻辑（只有触碰thumb才激活）----------
+        // ---------- 摇杆逻辑 (外圆100,内圆60，最大偏移20px) ----------
         const joystickBase = document.getElementById('joystickBase');
         const joystickThumb = document.getElementById('joystickThumb');
         let activeJoystick = false;
         let joystickCenter = { x: 0, y: 0 };
-        let joystickRadius = 48;   // 外圆半径120，内圆60，最大偏移48px
-        let currentDirectionSent = null;
+        let joystickRadius = 20;   // 外圆半径50 - 内圆半径30 = 20px最大偏移
         
         function updateJoystickCenter() {
             const rect = joystickBase.getBoundingClientRect();
             joystickCenter.x = rect.left + rect.width / 2;
             joystickCenter.y = rect.top + rect.height / 2;
-            joystickRadius = rect.width / 2 - 12;   // 外圆半径 - 内圆半径/2 ≈ 60-12=48
+            // 重新计算半径: (外圆半径 - 内圆半径) ，外圆宽100半径50，内圆半径30 => 20
+            const outerR = rect.width / 2;
+            const thumbR = joystickThumb.offsetWidth / 2;
+            joystickRadius = Math.max(5, outerR - thumbR);
         }
         
         function getDirectionFromVector(dx, dy) {
             const absX = Math.abs(dx);
             const absY = Math.abs(dy);
-            if (absX < 15 && absY < 15) return null;
+            if (absX < 12 && absY < 12) return null; // 死区
             if (absX > absY) {
                 return dx > 0 ? 'right' : 'left';
             } else {
@@ -378,22 +378,17 @@
             if (distance > maxDist) {
                 deltaX = (deltaX / distance) * maxDist;
                 deltaY = (deltaY / distance) * maxDist;
-                distance = maxDist;
             }
             joystickThumb.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
             let dir = getDirectionFromVector(deltaX, deltaY);
-            if (dir && dir !== currentDirectionSent) {
+            if (dir) {
                 changeDirectionFromJoystick(dir);
-                currentDirectionSent = dir;
-            } else if (!dir) {
-                currentDirectionSent = null;
             }
         }
         
         function resetJoystick() {
             joystickThumb.style.transform = `translate(0px, 0px)`;
             activeJoystick = false;
-            currentDirectionSent = null;
         }
         
         function handleJoystickStart(e) {
@@ -412,10 +407,7 @@
             }
             joystickThumb.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
             let dir = getDirectionFromVector(deltaX, deltaY);
-            if (dir) {
-                changeDirectionFromJoystick(dir);
-                currentDirectionSent = dir;
-            }
+            if (dir) changeDirectionFromJoystick(dir);
         }
         
         function handleJoystickMove(e) {
@@ -433,20 +425,15 @@
             resetJoystick();
         }
         
-        // 只在 thumb 上监听启动事件
         joystickThumb.addEventListener('touchstart', handleJoystickStart, { passive: false });
         joystickThumb.addEventListener('mousedown', handleJoystickStart);
         window.addEventListener('touchmove', handleJoystickMove, { passive: false });
         window.addEventListener('touchend', handleJoystickEnd);
         window.addEventListener('touchcancel', handleJoystickEnd);
-        window.addEventListener('mousemove', (e) => {
-            if (activeJoystick) handleJoystickMove(e);
-        });
+        window.addEventListener('mousemove', (e) => { if (activeJoystick) handleJoystickMove(e); });
         window.addEventListener('mouseup', handleJoystickEnd);
-        
-        // 防止base区域干扰
-        joystickBase.addEventListener('touchstart', (e) => { e.preventDefault(); });
-        joystickBase.addEventListener('mousedown', (e) => { e.preventDefault(); });
+        joystickBase.addEventListener('touchstart', (e) => e.preventDefault());
+        joystickBase.addEventListener('mousedown', (e) => e.preventDefault());
         
         function changeDirectionFromJoystick(newDir) {
             if (isPaused || isGameOver || !canChange) return;
@@ -460,7 +447,6 @@
                 canChange = false;
             }
         }
-        
         function keyboardChange(newDir) { changeDirectionFromJoystick(newDir); }
         
         // ---------- 游戏核心函数 ----------
@@ -503,9 +489,7 @@
         function updateComboUI() {
             if(combo > 1) showToast(`⚡ ${combo}连击 x${Math.min(3,1+Math.floor(combo/3))}倍!`, '#FFB347');
         }
-        
         function getComboBonus() { let mult = 1 + Math.floor(combo / 3); return Math.min(mult, 3); }
-        function resetCombo() { combo = 0; if(comboTimeout) clearTimeout(comboTimeout); }
         function onEat() {
             let now = Date.now();
             if(lastEatTimestamp && (now - lastEatTimestamp) < 1700) combo++;
@@ -615,9 +599,8 @@
             if(currentMode === 'classic'){
                 let speeds={easy:180, medium:130, hard:85, insane:55};
                 currentSpeed = speeds[currentDifficulty] || 130;
-                baseSpeed = currentSpeed;
-            } else if(currentMode === 'timed'){ currentSpeed = 125; baseSpeed = 125; }
-            else if(currentMode === 'survival'){ currentSpeed = 120; survivalBase = 120; }
+            } else if(currentMode === 'timed'){ currentSpeed = 125; }
+            else if(currentMode === 'survival'){ currentSpeed = 120; }
             genObstacles();
             generateFood();
             if(!specialFoodActive && Math.random()<0.2) spawnSpecialFood();
@@ -662,11 +645,11 @@
             const list = document.getElementById('scoreList');
             if(!list) return;
             list.innerHTML = '';
-            if(scores.length===0){ list.innerHTML='<li style="text-align:center;">暂无记录</li>'; return;}
+            if(scores.length===0){ list.innerHTML='<li style="text-align:center; color:#aaa;">暂无记录</li>'; return;}
             scores.forEach((item,idx)=>{
                 let li = document.createElement('li');
                 li.style.display='flex'; li.style.justifyContent='space-between'; li.style.padding='6px 0'; li.style.borderBottom='1px solid #2a2f55';
-                li.innerHTML = `<span>${idx+1}. ${item.score}分</span><span style="font-size:0.7rem;">${item.mode==='classic'?'经典':(item.mode==='timed'?'限时':'生存')} ${item.diff}</span>`;
+                li.innerHTML = `<span>${idx+1}. ${item.score}分</span><span style="font-size:0.65rem;">${item.mode==='classic'?'经典':(item.mode==='timed'?'限时':'生存')} ${item.diff}</span>`;
                 list.appendChild(li);
             });
         }
@@ -795,7 +778,7 @@
             fullReset(); draw();
         }
         
-        // 备用屏幕滑动
+        // 备用滑动
         canvas.addEventListener('touchstart', e=>{ touchStart.x=e.touches[0].clientX; touchStart.y=e.touches[0].clientY; e.preventDefault();});
         canvas.addEventListener('touchend', e=>{
             let dx = e.changedTouches[0].clientX - touchStart.x;
