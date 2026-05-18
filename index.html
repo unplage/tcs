@@ -7,11 +7,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="manifest" href="./manifest.json">
     <style>
+        /* 全局基础样式 - 不全局禁用触摸动作，仅针对需要精确控制的元素单独设置 */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            touch-action: none;
             -webkit-tap-highlight-color: transparent;
             user-select: none;
         }
@@ -23,8 +23,8 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 12px 8px 40px 8px;  /* 增加底部内边距，防止底部内容被遮挡 */
-            touch-action: pan-y;
+            padding: 12px 8px 40px 8px;
+            touch-action: pan-y;          /* 允许页面垂直滚动，但不影响内部控件 */
             overflow-y: auto;
         }
         .header {
@@ -90,6 +90,7 @@
             background: #0f1629;
             padding: 5px;
             border-radius: 60px;
+            touch-action: pan-y;          /* 允许轻微滚动但按钮点击仍精确 */
         }
         .mode-btn {
             flex: 1;
@@ -131,17 +132,18 @@
             color: #0f0f1f;
             box-shadow: 0 0 6px #ffb347;
         }
-        /* 摇杆外圆100px，内圆60px不变 */
+        /* 摇杆外圆100px，内圆60px不变 - 精确触摸控制，禁止滚动 */
         .joystick-container {
             display: flex;
             justify-content: center;
             align-items: center;
             margin: 12px auto 6px;
             width: 100%;
+            touch-action: none;           /* 摇杆区域禁止页面滚动 */
         }
         .joystick-base {
             position: relative;
-            width: 100px;          /* 外圆100x100 */
+            width: 100px;
             height: 100px;
             background: rgba(30, 40, 65, 0.95);
             border-radius: 50%;
@@ -153,7 +155,7 @@
         }
         .joystick-thumb {
             position: absolute;
-            width: 60px;           /* 内圆60px不变 */
+            width: 60px;
             height: 60px;
             background: radial-gradient(circle at 30% 30%, #f0f0f0, #c0c0e0);
             border-radius: 50%;
@@ -163,6 +165,7 @@
             will-change: transform;
             border: 2px solid rgba(255,255,255,0.7);
             cursor: grab;
+            touch-action: none;
         }
         .joystick-thumb:active {
             cursor: grabbing;
@@ -185,10 +188,13 @@
             justify-content: center;
             gap: 5px;
             font-size: 0.8rem;
+            touch-action: manipulation;
         }
         .start-btn { background: #2ecc71; color: #000; }
         .pause-btn { background: #e67e22; }
         .restart-btn { background: #3498db; }
+        
+        /* 荣誉殿堂容器 - 必须支持垂直滑动 */
         .scoreboard-container {
             max-width: 550px;
             width: 100%;
@@ -197,7 +203,31 @@
             padding: 12px;
             margin-top: 6px;
             margin-bottom: 8px;
+            touch-action: pan-y;           /* 允许垂直滚动 */
         }
+        /* 分数列表滚动区域 */
+        #scoreList {
+            list-style: none;
+            max-height: 140px;
+            overflow-y: auto;
+            padding: 0 6px;
+            margin: 0;
+            touch-action: pan-y;           /* 确保列表内可滚动 */
+            -webkit-overflow-scrolling: touch;
+        }
+        /* 自定义滚动条样式（可选） */
+        #scoreList::-webkit-scrollbar {
+            width: 4px;
+        }
+        #scoreList::-webkit-scrollbar-track {
+            background: #2a2f55;
+            border-radius: 4px;
+        }
+        #scoreList::-webkit-scrollbar-thumb {
+            background: #ffb347;
+            border-radius: 4px;
+        }
+        
         .toast-msg {
             position: fixed;
             bottom: 25%;
@@ -225,6 +255,18 @@
             text-align: center;
             color: #8e99c0;
             margin-top: 6px;
+        }
+        /* 游戏画布区域，禁止滚动以保证滑动控制精准 */
+        .game-area {
+            touch-action: none;
+            position: relative;
+        }
+        canvas {
+            width: 100%;
+            height: 100%;
+            background: #0b1120;
+            display: block;
+            touch-action: none;
         }
         @media (max-width: 460px) {
             .joystick-base { width: 90px; height: 90px; }
@@ -288,7 +330,7 @@
 
 <div class="scoreboard-container">
     <h3 style="text-align:center; color:#FFD966; font-size:1.1rem;"><i class="fas fa-trophy"></i> 荣誉殿堂</h3>
-    <ul id="scoreList" style="list-style:none; max-height:130px; overflow-y:auto; padding:0 6px;"></ul>
+    <ul id="scoreList"></ul>
 </div>
 
 <script>
@@ -352,7 +394,6 @@
             const rect = joystickBase.getBoundingClientRect();
             joystickCenter.x = rect.left + rect.width / 2;
             joystickCenter.y = rect.top + rect.height / 2;
-            // 重新计算半径: (外圆半径 - 内圆半径) ，外圆宽100半径50，内圆半径30 => 20
             const outerR = rect.width / 2;
             const thumbR = joystickThumb.offsetWidth / 2;
             joystickRadius = Math.max(5, outerR - thumbR);
@@ -361,7 +402,7 @@
         function getDirectionFromVector(dx, dy) {
             const absX = Math.abs(dx);
             const absY = Math.abs(dy);
-            if (absX < 12 && absY < 12) return null; // 死区
+            if (absX < 12 && absY < 12) return null;
             if (absX > absY) {
                 return dx > 0 ? 'right' : 'left';
             } else {
@@ -778,7 +819,7 @@
             fullReset(); draw();
         }
         
-        // 备用滑动
+        // 备用滑动（画布滑动控制方向）
         canvas.addEventListener('touchstart', e=>{ touchStart.x=e.touches[0].clientX; touchStart.y=e.touches[0].clientY; e.preventDefault();});
         canvas.addEventListener('touchend', e=>{
             let dx = e.changedTouches[0].clientX - touchStart.x;
