@@ -13,4 +13,6 @@
 - **Controls**: touch joystick, canvas swipe, keyboard arrows; Space/Enter to start/pause/restart
 - **Audio**: 15 embedded Base64 WAV sounds (programmatic synthesis), togglable in settings
 - **Haptics**: `navigator.vibrate()` for eat/combo/death feedback, togglable in settings
-- **Preview**: `npm run dev` or open `index.html` after `npm run build`
+- **PWA files**: `sw.js` and `manifest.json` at project root (NOT in `public/`); Vite copies them to `dist/` on build
+- **Preview**: `npm run dev` —— open browser at `http://localhost:5173/` (dev, HMR)
+  Production preview: `npm run build && npx serve dist`
