@@ -1,6 +1,6 @@
 // sw.js - 通用 Service Worker (适配 GitHub Pages 多项目)
 // 动态确定当前应用的子目录，隔离缓存，确保离线访问正常
-// v6: 缓存清理严格限定在本应用自己的命名空间内，绝不删除同源下其它 PWA 的缓存
+// v7: 玩法大更新（AI 对手/冲刺斩蛇/道具/皮肤/每日挑战），缓存版本 +1
 
 // ---------- 1. 动态路径与缓存名称 ----------
 // 获取当前 sw.js 所在的目录路径（例如 '/tcs/'）
@@ -10,7 +10,7 @@ const SCOPE_SLUG = BASE_PATH.replace(/\//g, '-');
 // 本应用缓存名的公共前缀（例如 'pwa-cache-tcs-'）
 const CACHE_PREFIX = `pwa-cache${SCOPE_SLUG}`;
 // 缓存版本号：内容或逻辑变化时 +1，旧版本会在激活阶段被清理
-const CACHE_VERSION = 'v6';
+const CACHE_VERSION = 'v7';
 // 当前使用的缓存名（例如 'pwa-cache-tcs-v6'）
 const CACHE_NAME = `${CACHE_PREFIX}${CACHE_VERSION}`;
 // 只匹配「本应用自己」产生的缓存（如 pwa-cache-tcs-v1 / v2 ...）
